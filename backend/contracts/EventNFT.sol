@@ -7,11 +7,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol"; // NFT
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract FestivalNFT is Context, AccessControl, ERC721 {
+contract EventNFT is Context, AccessControl, ERC721 {
     using Counters for Counters.Counter;
 
     Counters.Counter private _ticketIds; // a counter to remember how many unique tickets now
-    Counters.Counter private _saleTicketId; // sold ticket ID
     Counters.Counter[] private _ticketExistCounterList;
     Counters.Counter[] private _ticketSoldtCounterList;
 
@@ -113,7 +112,6 @@ contract FestivalNFT is Context, AccessControl, ERC721 {
         _ticketExistCounterList[level].increment();
         uint256 newTicketId = _ticketIds.current();
         _mint(operator, newTicketId);
-
         _ticketDetails[newTicketId] = TicketDetails({
             purchasePrice: _ticketPriceList[level],
             sellingPrice: 0,
@@ -153,15 +151,10 @@ contract FestivalNFT is Context, AccessControl, ERC721 {
         public
         hasUnsoldTicket(level)
     {
-        uint256 saleTicketId = getUnsoldTicketID(level)+1; // The id of ticket is started from 1
+        uint256 saleTicketId = getUnsoldTicketID(level); // The id of ticket is started from 1
         _ticketSoldtCounterList[level].increment();
-        
-        require(
-            msg.sender == ownerOf(saleTicketId),
-            "Only initial purchase allowed"
-        );
-
-        transferFrom(ownerOf(saleTicketId), buyer, saleTicketId);
+        address owner = ownerOf(saleTicketId);
+        transferFrom(owner, buyer, saleTicketId);
 
         if (!isCustomerExist(buyer)) {
             customers.push(buyer);
@@ -237,29 +230,9 @@ contract FestivalNFT is Context, AccessControl, ERC721 {
         approve(operator, ticketId);
     }
 
-    // Get ticket max level
-    function getMaxTicketLevel() public view returns (uint8) {
-        return _maxTicketLevel;
-    }
-
     // Get ticket actual price
     function getTicketPrice(uint8 level) public view returns (uint256) {
         return _ticketPriceList[level];
-    }
-
-    // Get ticket Capacity
-    function getTicketCapacity(uint8 level) public view returns (uint256) {
-        return _ticketSupplyList[level];
-    }
-
-    // Get ticket already created
-    function getExistedTicket(uint8 level) public view returns (uint256) {
-        return _ticketExistCounterList[level].current();
-    }
-
-    // Get ticket already sold
-    function getSoldTicket(uint8 level) public view returns (uint256) {
-        return _ticketSoldtCounterList[level].current();
     }
 
     // Get organiser's address
@@ -272,21 +245,59 @@ contract FestivalNFT is Context, AccessControl, ERC721 {
         return _ticketIds.current();
     }
 
-    // Get next sale ticketId
-    function getNextSaleTicketId() public view returns (uint256) {
-        return _saleTicketId.current();
-    }
-
     // Get selling price for the ticket
     function getSellingPrice(uint256 ticketId) public view returns (uint256) {
         return _ticketDetails[ticketId].sellingPrice;
     }
 
-    // Get all tickets available for sale
-    function getTicketsForSale() public view returns (uint256[] memory) {
-        return ticketsForSale;
+    function getBasicInformation() 
+        public
+        view 
+        returns (
+            address ,
+            string memory, 
+            string memory,
+            uint8 ,  
+            uint256[] memory,
+            uint256[] memory
+        )
+    {
+        return (
+            _organiser,
+            name(),
+            symbol(),
+            _maxTicketLevel,
+            _ticketPriceList,
+            _ticketSupplyList
+        );
     }
 
+    function getEventStatus() 
+        public
+        view 
+        returns (
+            uint256,
+            uint256[] memory,
+            uint256[] memory,
+            uint256[] memory
+        )
+    {   
+        uint256[] memory ticketExistCounterList = new uint256[](_maxTicketLevel);
+        for(uint8 level = 0; level < _maxTicketLevel; level++){
+            ticketExistCounterList[level] = _ticketExistCounterList[level].current();
+        }
+        uint256[] memory ticketSoldtCounterList = new uint256[](_maxTicketLevel);
+        for(uint8 level = 0; level < _maxTicketLevel; level++){
+            ticketSoldtCounterList[level] = _ticketSoldtCounterList[level].current();
+        }
+        uint256[] memory _ticketsForSale = ticketsForSale; 
+        return (
+            _ticketIds.current(),
+            _ticketsForSale,
+            ticketExistCounterList, 
+            ticketSoldtCounterList
+        );
+    }
 
 
     // Get ticket details
@@ -393,15 +404,16 @@ contract FestivalNFT is Context, AccessControl, ERC721 {
     }
 
     function getUnsoldTicketID(uint8 level)
-        internal
+        public
         view
         returns (uint256)
         {
-            uint256 id = 0;
+            uint256 id = 1;  // started from 1 
             for (uint256 i = 0; i < level; i++){
                 id += _ticketExistCounterList[i].current();
             }
             id += _ticketSoldtCounterList[level].current();
+
             return id;
         }
 

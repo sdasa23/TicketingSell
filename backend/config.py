@@ -9,13 +9,14 @@ class Config:
     with open("./artifacts/compiled_code.json", "r") as file:
         compiled_sol = json.load(file)
 
-    FestToken_bytecode = compiled_sol["contracts"]["FestToken.sol"]["FestToken"]["evm"]["bytecode"]["object"]
-    FestToken_abi = compiled_sol["contracts"]["FestToken.sol"]["FestToken"]["abi"]
+    EventToken_bytecode = compiled_sol["contracts"]["EventToken.sol"]["EventToken"]["evm"]["bytecode"]["object"]
+    EventToken_abi = compiled_sol["contracts"]["EventToken.sol"]["EventToken"]["abi"]
 
-    FestivalNFT_bytecode = compiled_sol["contracts"]["FestivalNFT.sol"]["FestivalNFT"]["evm"]["bytecode"]["object"]
-    FestivalNFT_abi = compiled_sol["contracts"]["FestivalNFT.sol"]["FestivalNFT"]["abi"]
+    EventNFT_bytecode = compiled_sol["contracts"]["EventNFT.sol"]["EventNFT"]["evm"]["bytecode"]["object"]
+    EventNFT_abi = compiled_sol["contracts"]["EventNFT.sol"]["EventNFT"]["abi"]
 
-    FestivalMarketplace_bytecode = compiled_sol["contracts"]["FestivalMarketplace.sol"]["FestivalMarketplace"]["evm"]["bytecode"]["object"]
-    FestivalMarketplace_abi = compiled_sol["contracts"]["FestivalMarketplace.sol"]["FestivalMarketplace"]["abi"]
+    EventMarketplace_bytecode = compiled_sol["contracts"]["EventMarketplace.sol"]["EventMarketplace"]["evm"]["bytecode"]["object"]
+    EventMarketplace_abi = compiled_sol["contracts"]["EventMarketplace.sol"]["EventMarketplace"]["abi"]
 
+    db_path = "./TrustTix.db"
 config = Config()

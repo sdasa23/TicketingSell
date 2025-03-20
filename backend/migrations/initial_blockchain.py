@@ -15,21 +15,21 @@ def initial_env(web3_address:str ,chain_id:int, publisher_account_hash:str, user
     with open(Migrations, "r") as file:
         Migrations = file.read()
 
-    FestToken = os.path.join(contracts_path, "FestToken.sol")
-    with open(FestToken, "r") as file:
-        FestToken = file.read()
+    EventToken = os.path.join(contracts_path, "EventToken.sol")
+    with open(EventToken, "r") as file:
+        EventToken = file.read()
 
-    FestiveTicketsFactory = os.path.join(contracts_path, "FestiveTicketsFactory.sol")
-    with open(FestiveTicketsFactory, "r") as file:
-        FestiveTicketsFactory = file.read()
+    EventTicketsFactory = os.path.join(contracts_path, "EventTicketsFactory.sol")
+    with open(EventTicketsFactory, "r") as file:
+        EventTicketsFactory = file.read()
 
-    FestivalNFT = os.path.join(contracts_path, "FestivalNFT.sol")
-    with open(FestivalNFT, "r") as file:
-        FestivalNFT = file.read()
+    EventNFT = os.path.join(contracts_path, "EventNFT.sol")
+    with open(EventNFT, "r") as file:
+        EventNFT = file.read()
 
-    FestivalMarketplace = os.path.join(contracts_path, "FestivalMarketplace.sol")
-    with open(FestivalMarketplace, "r") as file:
-        FestivalMarketplace = file.read()
+    EventMarketplace = os.path.join(contracts_path, "EventMarketplace.sol")
+    with open(EventMarketplace, "r") as file:
+        EventMarketplace = file.read()
 
 
     install_solc("0.8.29")
@@ -39,10 +39,10 @@ def initial_env(web3_address:str ,chain_id:int, publisher_account_hash:str, user
         {
             "language": "Solidity",
             "sources": {"Migrations.sol": {"content": Migrations},
-                        "FestToken.sol": {"content": FestToken},
-                        "FestiveTicketsFactory.sol": {"content": FestiveTicketsFactory},
-                        "FestivalNFT.sol": {"content": FestivalNFT},
-                        "FestivalMarketplace.sol": {"content": FestivalMarketplace},
+                        "EventToken.sol": {"content": EventToken},
+                        "EventTicketsFactory.sol": {"content": EventTicketsFactory},
+                        "EventNFT.sol": {"content": EventNFT},
+                        "EventMarketplace.sol": {"content": EventMarketplace},
                         },
             "settings": {
                 "evmVersion": "istanbul",
@@ -60,8 +60,8 @@ def initial_env(web3_address:str ,chain_id:int, publisher_account_hash:str, user
     with open("../artifacts/compiled_code.json", "w") as file:
         json.dump(compiled_sol, file)
 
-    bytecode = compiled_sol["contracts"]["FestToken.sol"]["FestToken"]["evm"]["bytecode"]["object"]
-    abi = compiled_sol["contracts"]["FestToken.sol"]["FestToken"]["abi"]
+    bytecode = compiled_sol["contracts"]["EventToken.sol"]["EventToken"]["evm"]["bytecode"]["object"]
+    abi = compiled_sol["contracts"]["EventToken.sol"]["EventToken"]["abi"]
 
     SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 
