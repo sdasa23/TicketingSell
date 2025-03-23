@@ -16,7 +16,7 @@ def getAllEvents():
     conn = sqlite3.connect(config.db_path)
     cursor = conn.cursor()
 
-    query = "SELECT * FORM event"
+    query = "SELECT * FROM event"
     cursor.execute(query)
     re = cursor.fetchall()
 

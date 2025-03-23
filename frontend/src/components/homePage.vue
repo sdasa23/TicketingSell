@@ -8,7 +8,8 @@
       <section class="user-info">
         <h1>Welcome, User</h1>
         <p>Your address: {{ user.name }}</p>
-        <p>Account Balance: {{ user.balance }}</p>
+        <p>Account Balance: {{ user.balance }} <button @click="add_token_into_wallet()" style="float: right;">add token to wallet</button></p>
+        
       </section>
       <section class="market-buttons">
         <button @click="goToFirstMarket">First Market</button>
@@ -21,6 +22,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 async function getCurrentUserAddress() {
   if (window.ethereum) {
@@ -44,7 +46,34 @@ async function getCurrentUserAddress() {
   }
 }
 
+  async function getTokenInf(){
+      const response = await axios.get('http://localhost:8000/get-token-address');
+      return response;
+  }
 
+  async function getTokenBalance(user_address){
+      const balance = await axios.get('http://localhost:8000/get-token-balance',{
+        params: {user_address : user_address} 
+      });
+      return balance.data
+  }
+
+  async function add_token_into_wallet(){
+    const response = await getTokenInf();
+    console.log(response)
+    await window.ethereum.request({
+      "method": "wallet_watchAsset",
+      "params": {
+        type: "ERC20",
+        options: {
+          address: response.data.address,
+          symbol: response.data.symbol,
+          decimals: response.data.decimal,
+          image: response.data.image
+        }
+      }
+    })
+  }
 
 const user = ref({
   name: '',
@@ -68,6 +97,7 @@ const goToSecondMarket = () => {
 
 onMounted(async () => {
   user.value.name = await getCurrentUserAddress();
+  user.value.balance = await getTokenBalance(user.value.name);
 });
 </script>
 

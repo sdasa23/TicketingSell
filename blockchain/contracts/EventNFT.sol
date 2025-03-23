@@ -30,7 +30,6 @@ contract EventNFT is Context, AccessControl, ERC721 {
     uint256[] private _ticketPriceList;
     uint256[] private _ticketSupplyList;
     uint8 private _maxTicketLevel; // The levels of tickets are from 0 to _maxTicketLevel  
-    uint256 private _totalSupply;
 
     mapping(uint256 => TicketDetails) private _ticketDetails;
     mapping(address => uint256[]) private purchasedTickets;
@@ -44,21 +43,17 @@ contract EventNFT is Context, AccessControl, ERC721 {
         address organiser
     ) ERC721(festName, FestSymbol) {
         _grantRole(MINTER_ROLE, organiser);
+        _grantRole(MINTER_ROLE, _msgSender());
 
         _maxTicketLevel = maxTicketLevel;
         _ticketPriceList = ticketPriceList;
         _ticketSupplyList = ticketSupplyList;
         _organiser = organiser;
-        _totalSupply = getSumTicketNumber(_ticketSupplyList);
         initialTicketCounterList();
     }
 
     modifier isValidTicketCount(uint8 level) {
         //The first require can be removed.
-        require(
-            _ticketIds.current() < _totalSupply,
-            "Maximum ticket limit exceeded!"  
-        );
         require(
             _ticketExistCounterList[level].current() < _ticketSupplyList[level],
             "Maximum ticket limit exceeded in this Level!"
@@ -66,7 +61,7 @@ contract EventNFT is Context, AccessControl, ERC721 {
         _;
     }
 
-    modifier isMinterRole {
+    modifier isMinterRole() {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "User must have minter role to mint"
@@ -186,8 +181,8 @@ contract EventNFT is Context, AccessControl, ERC721 {
 
         purchasedTickets[buyer].push(saleTicketId);
 
-        removeTicketFromCustomer(seller, saleTicketId);
-        removeTicketFromSale(saleTicketId);
+        // removeTicketFromCustomer(seller, saleTicketId); //ERROR here
+        removeTicketFromSale(saleTicketId); 
 
         _ticketDetails[saleTicketId] = TicketDetails({
             purchasePrice: sellingPrice,
@@ -214,11 +209,11 @@ contract EventNFT is Context, AccessControl, ERC721 {
             "Re-selling price is more than 110%"
         );
 
-        // Should not be an organiser
-        require(
-            !hasRole(MINTER_ROLE, _msgSender()),
-            "Functionality only allowed for secondary market"
-        );
+        // // Should not be an organiser
+        // require(
+        //     !hasRole(MINTER_ROLE, _msgSender()),
+        //     "Functionality only allowed for secondary market"
+        // );
 
         _ticketDetails[ticketId].sellingPrice = sellingPrice;
         _ticketDetails[ticketId].forSale = true;
@@ -227,7 +222,7 @@ contract EventNFT is Context, AccessControl, ERC721 {
             ticketsForSale.push(ticketId);
         }
 
-        approve(operator, ticketId);
+        // approve(operator, ticketId);
     }
 
     // Get ticket actual price
@@ -282,12 +277,12 @@ contract EventNFT is Context, AccessControl, ERC721 {
             uint256[] memory
         )
     {   
-        uint256[] memory ticketExistCounterList = new uint256[](_maxTicketLevel);
-        for(uint8 level = 0; level < _maxTicketLevel; level++){
+        uint256[] memory ticketExistCounterList = new uint256[](_maxTicketLevel+1);
+        for(uint8 level = 0; level < _maxTicketLevel+1; level++){
             ticketExistCounterList[level] = _ticketExistCounterList[level].current();
         }
-        uint256[] memory ticketSoldtCounterList = new uint256[](_maxTicketLevel);
-        for(uint8 level = 0; level < _maxTicketLevel; level++){
+        uint256[] memory ticketSoldtCounterList = new uint256[](_maxTicketLevel+1);
+        for(uint8 level = 0; level < _maxTicketLevel+1; level++){
             ticketSoldtCounterList[level] = _ticketSoldtCounterList[level].current();
         }
         uint256[] memory _ticketsForSale = ticketsForSale; 
@@ -370,18 +365,22 @@ contract EventNFT is Context, AccessControl, ERC721 {
         }
     }
 
-    // Utility function to remove ticket from sale list
-    function removeTicketFromSale(uint256 ticketId) internal {
-        uint256 numOfTickets = ticketsForSale.length;
 
-        for (uint256 i = 0; i < numOfTickets; i++) {
+    function removeTicketFromSale(uint256 ticketId) internal returns (bool) {
+        require(ticketsForSale.length > 0, "Array is empty"); 
+
+        for (uint256 i = 0; i < ticketsForSale.length; i++) {
             if (ticketsForSale[i] == ticketId) {
-                for (uint256 j = i + 1; j < numOfTickets; j++) {
-                    ticketsForSale[j - 1] = ticketsForSale[j];
+                require(i < ticketsForSale.length, "Index out of bounds"); 
+                if (i < ticketsForSale.length - 1) {
+                    ticketsForSale[i] = ticketsForSale[ticketsForSale.length - 1];
                 }
                 ticketsForSale.pop();
+                return true;
             }
         }
+
+        return false;
     }
 
     function getSumTicketNumber(uint256[] memory ticketSupplyList) 
@@ -397,7 +396,7 @@ contract EventNFT is Context, AccessControl, ERC721 {
     }
 
     function initialTicketCounterList() internal {
-        for(uint256 i = 0; i < _maxTicketLevel; i++){
+        for(uint256 i = 0; i < _maxTicketLevel+1; i++){
             _ticketExistCounterList.push(); // add a new counter
             _ticketSoldtCounterList.push(); // add a new counter
         }        

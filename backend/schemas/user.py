@@ -8,3 +8,9 @@ class userResponse(BaseModel):
     user_address: str
     balance: int
     transaction_hash: str
+
+class tokenResponse(BaseModel):
+    address: str
+    symbol: str
+    decimal: int
+    image: str

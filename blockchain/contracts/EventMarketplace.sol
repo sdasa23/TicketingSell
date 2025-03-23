@@ -20,18 +20,14 @@ contract EventMarketplace {
     event Purchase(address indexed buyer, address seller, uint256 ticketId);
 
     // Purchase tickets from the organiser directly
-    function purchaseTicket(uint8 ticketLevel) public {
-        address buyer = msg.sender;
-        uint256 ticketPrice = _Event.getTicketPrice(ticketLevel);
-
+    function purchaseTicket(uint8 ticketLevel, address buyer) public {
         _token.transferFrom(buyer, _organiser, _Event.getTicketPrice(ticketLevel));
         _Event.transferTicket(buyer, ticketLevel);
     }
 
     // Purchase ticket from the secondary market hosted by organiser
-    function secondaryPurchase(uint256 ticketId) public {
+    function secondaryPurchase(uint256 ticketId, address buyer) public {
         address seller = _Event.ownerOf(ticketId);
-        address buyer = msg.sender;
         uint256 sellingPrice = _Event.getSellingPrice(ticketId);
 
         _token.transferFrom(buyer, seller, sellingPrice);  
@@ -40,6 +36,5 @@ contract EventMarketplace {
 
         emit Purchase(buyer, seller, ticketId);
     }
-
 
 }

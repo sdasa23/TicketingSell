@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from web3 import HTTPProvider, Web3
 
-from schemas.user import UserRequest, userResponse
+from schemas.user import UserRequest, userResponse, tokenResponse
 from crud.user import isNewUser, insertNewUser
 from config import config
 
@@ -29,7 +29,7 @@ async def send_tokens(address: str):
 
     transaction_unit_number = 100* (10 ** 18) # 100 token coins 
 
-    nonce = w3.eth.get_transaction_count(config.publisher_account_hash)
+    nonce = w3.eth.get_transaction_count(config.admin_address)
     transaction = token_contract.functions.transfer(user_address, transaction_unit_number).build_transaction({
         "chainId": config.chain_id,
         "gas": 200000,
@@ -37,7 +37,7 @@ async def send_tokens(address: str):
         "nonce": nonce
     })
 
-    signed_txn = w3.eth.account.sign_transaction(transaction, private_key=config.userKey)
+    signed_txn = w3.eth.account.sign_transaction(transaction, private_key=config.admin_key)
 
     tx_hash = w3.eth.send_raw_transaction(signed_txn.raw_transaction)
     tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
@@ -53,4 +53,18 @@ async def send_tokens(address: str):
         transaction_hash=tx_receipt["transactionHash"].hex()
     )
 
+@router.get("/get-token-address", response_model=tokenResponse)
+async def send_token_address():
+    return tokenResponse(
+        address=config.token_contract_address,
+        symbol= "EVENT",
+        decimal= 18,
+        image= ""
+    )
 
+@router.get("/get-token-balance")
+async def send_token_balance(user_address: str) -> int:
+    address = Web3.to_checksum_address(user_address)
+    token_contract = w3.eth.contract(address = config.token_contract_address, abi = config.EventToken_abi)
+    balance = token_contract.functions.balanceOf(address).call()
+    return balance

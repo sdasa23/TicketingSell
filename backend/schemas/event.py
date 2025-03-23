@@ -8,7 +8,6 @@ class eventRequest(BaseModel):
     ticketPriceList: List[int]
     ticketSupplyList: List[int]
     organiser: str
-    priv_key: str
 
 class mintTicketsRequest(BaseModel):
     event_address: str

@@ -43,7 +43,6 @@
   }
 }
 
-
   const address = ref('');
   const result = ref(null);
   onMounted(async () => {
