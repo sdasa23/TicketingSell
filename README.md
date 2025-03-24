@@ -15,4 +15,4 @@ cd backend/ &&  uvicorn main:app --reload
 5. start Vue3 server(use another terminal)
 cd frontend/ && npm run serve
 
-6. Now you can visit http://localhost:8081/homePage 
+6. Now you can visit http://localhost:8081
