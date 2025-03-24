@@ -1,4 +1,4 @@
-###Start
+How to start?
 
 1. start  ganache test net
 ganache-cli --networkId 1 --accounts 10 --seed 1337 --port 8545 --hardfork istanbul --gasLimit  160000000000000000 --defaultBalanceEther  100000000 --gasPrice 10000
