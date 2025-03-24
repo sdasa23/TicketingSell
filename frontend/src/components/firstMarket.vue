@@ -1,76 +1,83 @@
 <template>
-    <div>
-      <h1>Welcome to first market</h1>
+  <div class="container">
+    <h1>Welcome to First Market</h1>
 
-      <button @click="showForm = !showForm">Post new evet</button>
-  
-      <div v-if="showForm">
-        <h2>Please input some event information</h2>
-        <form @submit.prevent="publishTicket">
-          <label for="name">event name:</label>
-          <input type="text" id="name" v-model="newTicket.name" required>
-  
-          <label for="symbol">event symbol:</label>
-          <input type="text" id="symbol" v-model="newTicket.symbol" required>
-  
-          <div v-for="(level, index) in newTicket.levels" :key="index">
-            <h3>The level of ticket{{ index }}</h3>
-            <label :for="`levelPrice${index}`">Price:</label>
-            <input :id="`levelPrice${index}`" type="number" v-model="level.price" required>
-  
-            <label :for="`levelQuantity${index}`">Supply:</label>
-            <input :id="`levelQuantity${index}`" type="number" v-model="level.quantity" required>
-  
-            <button type="button" @click="removeLevel(index)">delete level</button>
-          </div>
-  
-          <button type="button" @click="addLevel">add level</button>
-  
-          <button type="submit">publish</button>
-        </form>
-      </div>
-      <button type="button" @click="fetchTickets">fresh market</button>  
-      <div>
-        <table>
+    <button @click="showForm = !showForm">Post New Event</button>
+
+    <div v-if="showForm">
+      <h2>Please Input Event Information</h2>
+      <form @submit.prevent="publishTicket">
+        <label for="name">Event Name:</label>
+        <input type="text" id="name" v-model="newTicket.name" required>
+
+        <label for="symbol">Event Symbol:</label>
+        <input type="text" id="symbol" v-model="newTicket.symbol" required>
+
+        <div v-for="(level, index) in newTicket.levels" :key="index">
+          <h3>Ticket Level {{ index }}</h3>
+          <label :for="`levelPrice${index}`">Price:</label>
+          <input :id="`levelPrice${index}`" type="number" v-model="level.price" required>
+
+          <label :for="`levelQuantity${index}`">Supply:</label>
+          <input :id="`levelQuantity${index}`" type="number" v-model="level.quantity" required>
+
+        </div>
+        <button type="button" @click="removeLevel(index)">Delete Level</button>
+        <button type="button" @click="addLevel">Add Level</button>
+        <button type="submit">Publish</button>
+      </form>
+    </div>
+
+    <button type="button" @click="fetchTickets">Refresh Market</button>
+
+    <div>
+      <table>
         <thead>
-            <tr>
+          <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Symbol</th>
-            <th>address</th>
-            <th>market</th>
-            <th>organizer</th>
-            <th>detail</th>
+            <th>Address</th>
+            <th>Organizer</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="ticket in tickets" :key="ticket[0]">
+            <tr>
+              <td>{{ ticket[0] }}</td>
+              <td>{{ ticket[1] }}</td>
+              <td>{{ ticket[2] }}</td>
+              <td>{{ ticket[3] }}</td>
+              <td>{{ ticket[5] }}</td>
+              <td>
+                <button @click="fetchDetail(ticket[0])">Request Details</button>
+              </td>
             </tr>
-            </thead>
-                <tbody>
-                    <template v-for="ticket in tickets" :key="ticket[0]">
-                        <tr>
-                        <td>{{ ticket[0] }}</td>
-                        <td>{{ ticket[1] }}</td>
-                        <td>{{ ticket[2] }}</td>
-                        <td>{{ ticket[3] }}</td>
-                        <td>{{ ticket[4] }}</td>
-                        <td>{{ ticket[5] }}</td>
-                        <td>
-                            <button @click="fetchDetail(ticket[0])">Request Details</button>
-                        </td>
-                        </tr>
-                        <tr v-if="expandedId === ticket[0]">
-                        <td colspan="7">
-                            <div>{{ eventDetail }}</div>
-                            <div>{{ eventStatus }}</div>
-                            <button @click="buyOneTicket(buyLevel)">buy one</button>
-                            <label for="name">event name:</label>
-                            <input type="number" id="name" v-model="buyLevel" required>
-                        </td>
-                        </tr>
-                    </template>
-                </tbody>
-        </table>
+            <tr v-if="expandedId === ticket[0]">
+              <td colspan="7">
+                <div class="detail-card">
+                  <div>Organizer: {{ eventDetail.organizer }}</div>
+                  <div>Name: {{ eventDetail.name }}</div>
+                  <div>Symbol: {{ eventDetail.symbol }}</div>
+                  <div>Max Ticket Level: {{ eventDetail.maxTicketLevel }}</div>
+                  <div>Ticket Prices: {{ eventDetail.ticketPriceList.join(', ') }}</div>
+                  <div>Ticket Supplies: {{ eventDetail.ticketSupplyList.join(', ') }}</div>
+                  <div>Current Ticket IDs: {{ eventStatus.currentTicketIds }}</div>
+                  <div>Tickets For Sale: {{ eventStatus.ticketsForSale.join(', ') }}</div>
+                  <div>Ticket Exist Counter: {{ eventStatus.ticketExistCounterList.join(', ') }}</div>
+                  <div>Ticket Sold Counter: {{ eventStatus.ticketSoldtCounterList.join(', ') }}</div>
+                  <button @click="buyOneTicket(buyLevel)">Buy One</button>
+                  <label for="buyLevel">Ticket Level:</label>
+                  <input type="number" id="buyLevel" v-model="buyLevel" required>
+                </div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </div>
-  
-    </div>
+  </div>
   </template>
   
   <script setup>
@@ -268,12 +275,154 @@
         quantity: 0
       }
     ];
-    showForm.value = false; // 隐藏表单
+    showForm.value = false; 
   };
   
   onMounted(fetchTickets);
   </script>
   
-  <style>
-  /* 你可以在这里添加一些样式 */
+<style>
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  margin: 0.5rem;
+}
+
+button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+form {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.detail-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.detail-card div {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  form {
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  th, td {
+    padding: 0.75rem;
+  }
+}
   </style>

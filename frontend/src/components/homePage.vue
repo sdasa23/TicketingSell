@@ -106,47 +106,126 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #ffffff;
 }
 
 .header {
-  position: sticky; /* 粘性定位 */
-  top: 0; /* 固定在顶部 */
+  position: sticky;
+  top: 0;
   width: 100%;
   display: flex;
   justify-content: flex-end;
   padding: 1rem;
-  background-color: #333;
-  z-index: 1000; /* 确保 header 在最上层 */
+  background-color: rgba(0, 0, 0, 0.2); 
+  backdrop-filter: blur(10px); 
+  z-index: 1000;
+}
+
+.new-user-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.new-user-button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+.new-user-button:active {
+  transform: translateY(0);
 }
 
 .main-content {
-  flex: 1; /* 占据剩余空间 */
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 60px; /* 根据 header 的高度调整 */
+  padding: 2rem;
 }
 
-.new-user-button {
-  background-color: #007bff;
+.user-info {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.user-info h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.user-info p {
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+.user-info button {
+  background-color: #4a90e2;
   color: white;
   border: none;
   padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
-.user-info {
-  margin-bottom: 2rem;
-  text-align: center;
+
+.user-info button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+.user-info button:active {
+  transform: translateY(0);
+}
+
+.market-buttons {
+  display: flex;
+  gap: 1rem;
 }
 
 .market-buttons button {
-  margin: 0.5rem;
-  padding: 1rem 2rem;
-  background-color: #007bff;
+  background-color: #4a90e2;
   color: white;
   border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.market-buttons button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+.market-buttons button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .user-info {
+    padding: 1rem;
+  }
+
+  .market-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .market-buttons button {
+    width: 100%;
+  }
 }
 </style>

@@ -27,7 +27,6 @@
             <th></th>
             <th>eventAddress</th>
             <th>ticketId</th>
-            <th>market</th>
             <th>saler</th>
             <th>price</th>
             <th>buy</th>
@@ -38,7 +37,6 @@
                         <tr>
                         <td>{{ ticket[0] }}</td>
                         <td>{{ ticket[1] }}</td>
-                        <td>{{ ticket[2] }}</td>
                         <td>{{ ticket[3] }}</td>
                         <td>{{ ticket[4] }}</td>
                         <td>{{ ticket[5] }}</td>
@@ -185,12 +183,154 @@
         quantity: 0
       }
     ];
-    showForm.value = false; // 隐藏表单
+    showForm.value = false; 
   };
   
   onMounted(fetchTickets);
   </script>
   
   <style>
-  /* 你可以在这里添加一些样式 */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  margin: 0.5rem;
+}
+
+button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+form {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.detail-card {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.detail-card div {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  form {
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  th, td {
+    padding: 0.75rem;
+  }
+}
   </style>

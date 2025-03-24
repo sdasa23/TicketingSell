@@ -80,10 +80,113 @@ onMounted(async () => {
     <p class="text-center text-lg mb-6 px-4">To proceed, please connect your MetaMask wallet to access all features.</p>
 
     <vue-metamask ref="metamask" :init-connect="false"></vue-metamask>
-    <button @click="connect" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Connect Wallet</button>
+    <!-- <button @click="connect" class="mt-6 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Connect Wallet</button> -->
 </div>
 </template>
 
 <style scoped>
+.bg-gradient-to-br {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+}
 
+.text-primary-foreground {
+  color: #ffffff;
+}
+
+.text-3xl {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+button {
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+svg {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .text-3xl {
+    font-size: 2.5rem;
+  }
+
+  .text-lg {
+    font-size: 1.25rem;
+  }
+
+  button {
+    width: auto;
+    padding: 1rem 2rem;
+  }
+}
 </style>
