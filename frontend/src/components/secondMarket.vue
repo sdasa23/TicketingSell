@@ -1,35 +1,35 @@
 <template>
     <div>
-      <h1>Welcome to second market</h1>
+      <h1>Welcome to Second-hand Market</h1>
 
-      <button @click="showForm = !showForm">I want sale</button>
+      <button @click="showForm = !showForm">Sell Ticket(s)</button>
   
       <div v-if="showForm">
         <h2>Please input ticket information</h2>
         <form @submit.prevent="publishTicket">
-          <label for="address">event address:</label>
+          <label for="address">Event Address:</label>
           <input type="text" id="address" v-model="newTicket.event_address" required>
   
-          <label for="id">TicketId: </label>
+          <label for="id">Ticket Id: </label>
           <input type="text" id="id" v-model="newTicket.ticketId" required>
 
-          <label for="price">sale price:</label>
+          <label for="price">Sale Price:</label>
           <input type="number" id="price" v-model="newTicket.sale_price" required>
 
-          <button type="submit">publish</button>
+          <button type="submit">Publish</button>
         </form>
       </div>
-      <button type="button" @click="fetchTickets">fresh market</button>  
+      <button type="button" @click="fetchTickets">Refresh</button>  
       <div>
         <table>
         <thead>
             <tr>
             <th></th>
-            <th>eventAddress</th>
-            <th>ticketId</th>
-            <th>saler</th>
-            <th>price</th>
-            <th>buy</th>
+            <th>Event Address</th>
+            <th>Ticket ID</th>
+            <th>Seller</th>
+            <th>Price</th>
+            <th>Buy</th>
             </tr>
             </thead>
                 <tbody>
@@ -41,7 +41,7 @@
                         <td>{{ ticket[4] }}</td>
                         <td>{{ ticket[5] }}</td>
                         <td>
-                            <button @click="buyOneTicket(ticket)">buy</button>
+                            <button @click="buyOneTicket(ticket)">Buy</button>
                         </td>
                         </tr>
                     </template>

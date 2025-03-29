@@ -1,18 +1,18 @@
 <template>
   <div class="container">
-    <h1>Are you fresh?</h1>
+    <h1>Are you new user?</h1>
     <button @click="fetchData">Query</button>
     <div v-if="result && result.is_new_user" class="result-card">
       <h2>Result:</h2>
       <p>Wow, you are a new user!!</p>
-      <p>We will give you many many EVENT coins!</p>
+      <p>We will share some coins for your trial!!</p>
       <p>Now you have {{ result.balance }} EVENT coins!</p>
       <p>This transaction hash is: {{ result.transaction_hash }}</p>
     </div>
     <div v-else-if="result" class="result-card">
       <h2>Result:</h2>
-      <p>Sorry, you are not fresh.</p>
-      <p>But you have {{ result.balance }} EVENT coins!</p>
+      <p>You are a current user.</p>
+      <p>You have {{ result.balance }} EVENT coins!</p>
     </div>
     <div v-if="showFireworks" class="fireworks">
       <div v-for="(firework, index) in fireworks" :key="index" class="firework" :style="firework.style"></div>

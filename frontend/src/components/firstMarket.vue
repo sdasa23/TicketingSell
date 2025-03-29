@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <h1>Welcome to First Market</h1>
+    <h1>Welcome to Primary Market</h1>
 
-    <button @click="showForm = !showForm">Post New Event</button>
+    <button @click="showForm = !showForm">Create New Event</button>
 
     <div v-if="showForm">
       <h2>Please Input Event Information</h2>
@@ -10,15 +10,15 @@
         <label for="name">Event Name:</label>
         <input type="text" id="name" v-model="newTicket.name" required>
 
-        <label for="symbol">Event Symbol:</label>
+        <label for="symbol">Event Code:</label>
         <input type="text" id="symbol" v-model="newTicket.symbol" required>
 
         <div v-for="(level, index) in newTicket.levels" :key="index">
-          <h3>Ticket Level {{ index }}</h3>
-          <label :for="`levelPrice${index}`">Price:</label>
+          <h3>Ticket: Level {{ index }}</h3>
+          <label :for="`levelPrice${index}`">Ticket Pricing:</label>
           <input :id="`levelPrice${index}`" type="number" v-model="level.price" required>
 
-          <label :for="`levelQuantity${index}`">Supply:</label>
+          <label :for="`levelQuantity${index}`">Number of Tickets:</label>
           <input :id="`levelQuantity${index}`" type="number" v-model="level.quantity" required>
 
         </div>
@@ -28,7 +28,7 @@
       </form>
     </div>
 
-    <button type="button" @click="fetchTickets">Refresh Market</button>
+    <button type="button" @click="fetchTickets">Refresh</button>
 
     <div>
       <table>
@@ -36,10 +36,10 @@
           <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Symbol</th>
+            <th>Event Code</th>
             <th>Address</th>
             <th>Organizer</th>
-            <th>Detail</th>
+            <th>Purchase</th>
           </tr>
         </thead>
         <tbody>
@@ -51,7 +51,7 @@
               <td>{{ ticket[3] }}</td>
               <td>{{ ticket[5] }}</td>
               <td>
-                <button @click="fetchDetail(ticket[0])">Request Details</button>
+                <button @click="fetchDetail(ticket[0])">Purchase</button>
               </td>
             </tr>
             <tr v-if="expandedId === ticket[0]">
@@ -59,7 +59,7 @@
                 <div class="detail-card">
                   <div>Organizer: {{ eventDetail.organizer }}</div>
                   <div>Name: {{ eventDetail.name }}</div>
-                  <div>Symbol: {{ eventDetail.symbol }}</div>
+                  <div>Event code: {{ eventDetail.symbol }}</div>
                   <div>Max Ticket Level: {{ eventDetail.maxTicketLevel }}</div>
                   <div>Ticket Prices: {{ eventDetail.ticketPriceList.join(', ') }}</div>
                   <div>Ticket Supplies: {{ eventDetail.ticketSupplyList.join(', ') }}</div>

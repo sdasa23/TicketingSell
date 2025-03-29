@@ -3,7 +3,7 @@
 pragma solidity ^0.8.29;
 
 import "./EventNFT.sol";
-import "./EventToken.sol";
+import "./EventToken.sol"; 
 
 contract EventMarketplace {
     EventToken private _token;

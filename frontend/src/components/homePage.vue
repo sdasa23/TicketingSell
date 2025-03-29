@@ -12,8 +12,8 @@
         
       </section>
       <section class="market-buttons">
-        <button @click="goToFirstMarket">First Market</button>
-        <button @click="goToSecondMarket">Second Market</button>
+        <button @click="goToFirstMarket">Primary Market</button>
+        <button @click="goToSecondMarket">Second-hand Market</button>
       </section>
     </main>
   </div>

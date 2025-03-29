@@ -10,6 +10,30 @@ w3 = Web3(HTTPProvider(config.web3_address))
 
 @router.post("/create-new-event", response_model = eventResponse)
 async def create_event(request: eventRequest):
+    # Validate ticket lists
+    if not request.ticketPriceList or not request.ticketSupplyList:
+        raise HTTPException(status_code=400, detail="Ticket lists cannot be empty")
+        
+    if len(request.ticketPriceList) != len(request.ticketSupplyList):
+        raise HTTPException(status_code=400, detail="Price list and supply list must have matching lengths")
+        
+    if len(request.ticketPriceList) != request.maxTicketLevel + 1:
+        raise HTTPException(status_code=400, detail="maxTicketLevel does not match provided ticket lists")
+        
+    # Validate values
+    if any(price < 0 for price in request.ticketPriceList) or any(supply < 0 for supply in request.ticketSupplyList):
+        raise HTTPException(status_code=400, detail="Negative values are not allowed")
+        
+    if any(supply == 0 for supply in request.ticketSupplyList):
+        raise HTTPException(status_code=400, detail="Ticket supply must be greater than zero")
+        
+    if any(price >= 2**256 for price in request.ticketPriceList) or any(supply >= 2**256 for supply in request.ticketSupplyList):
+        raise HTTPException(status_code=400, detail="Value exceeds maximum allowed")
+        
+    # Validate name and symbol
+    if not all(c.isalnum() or c.isspace() for c in request.festName) or not all(c.isalnum() for c in request.festSymbol):
+        raise HTTPException(status_code=400, detail="Invalid characters in festival name or symbol")
+
     nonce = w3.eth.get_transaction_count(config.admin_address, 'pending')
     EventNTF_contract = w3.eth.contract(abi=config.EventNFT_abi, bytecode=config.EventNFT_bytecode)
     request.organiser = Web3.to_checksum_address(request.organiser)
@@ -131,8 +155,6 @@ async def responseEventInf(event_address: str):
 async def responseEventStatus(event_address: str):
     eventInf = await getEventStatus(event_address)
     return eventInf
-
-
 
 async def getBasicInformation(event_address: str):
     checksum_address = Web3.to_checksum_address(event_address)
