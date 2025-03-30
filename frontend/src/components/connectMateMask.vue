@@ -86,21 +86,24 @@ onMounted(async () => {
 
 <style scoped>
 .bg-gradient-to-br {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: linear-gradient(135deg, #f5f5f7, #e5e5ea);
 }
 
 .text-primary-foreground {
-  color: #ffffff;
+  color: #2c3e50; 
 }
 
 .text-3xl {
   font-size: 2rem;
   font-weight: 700;
+  color: #2c3e50;
+  letter-spacing: -0.5px;
 }
 
 .text-lg {
   font-size: 1.125rem;
   line-height: 1.75rem;
+  color: #4a4a4c; 
 }
 
 .mb-2 {
@@ -117,25 +120,31 @@ onMounted(async () => {
 }
 
 button {
-  background-color: #4a90e2;
-  color: white;
-  font-weight: bold;
+  background-color: #3a3a3c; 
+  color: #f5f5f7;
+  font-weight: 600;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.25s ease-out;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  letter-spacing: 0.3px;
 }
 
 button:hover {
-  background-color: #357abd;
+  background-color: #4a4a4c;
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button:active {
   transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 svg {
   animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08)); 
 }
 
 @keyframes float {
@@ -143,7 +152,7 @@ svg {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px); 
   }
 }
 
@@ -188,5 +197,23 @@ svg {
     width: auto;
     padding: 1rem 2rem;
   }
+  
+  .bg-gradient-to-br {
+    background: linear-gradient(135deg, #f5f5f7, #e0e0e5); 
+  }
+}
+
+.bg-gradient-to-br::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,0.8) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.6) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
 }
 </style>

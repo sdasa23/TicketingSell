@@ -106,8 +106,10 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #ffffff;
+  background: #f5f5f7; 
+  color: #2c3e50;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.6;
 }
 
 .header {
@@ -116,29 +118,30 @@ onMounted(async () => {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.2); 
-  backdrop-filter: blur(10px); 
+  padding: 1.5rem;
+  background: rgba(245, 245, 247, 0.92); 
+  backdrop-filter: blur(12px);
   z-index: 1000;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid #e0e0e0; 
 }
 
 .new-user-button {
-  background-color: #4a90e2;
-  color: white;
+  background: #3a3a3c; 
+  color: #f5f5f7;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.25s ease-out;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .new-user-button:hover {
-  background-color: #357abd;
-  transform: translateY(-2px);
-}
-
-.new-user-button:active {
-  transform: translateY(0);
+  background: #4a4a4c;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .main-content {
@@ -147,85 +150,119 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 3rem 2rem;
 }
 
 .user-info {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2rem;
-  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 3rem;
+  border-radius: 12px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  max-width: 500px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 3rem;
+  max-width: 600px;
   width: 100%;
+  border: 1px solid #e5e5ea; 
 }
 
 .user-info h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .user-info p {
   font-size: 1.125rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  color: #4a4a4c;
+  line-height: 1.7;
 }
 
 .user-info button {
-  background-color: #4a90e2;
-  color: white;
+  background: #3a3a3c;
+  color: #f5f5f7;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.25s ease-out;
+  font-weight: 500;
 }
 
 .user-info button:hover {
-  background-color: #357abd;
-  transform: translateY(-2px);
-}
-
-.user-info button:active {
-  transform: translateY(0);
+  background: #4a4a4c;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .market-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .market-buttons button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.98); 
+  color: #3a3a3c;
+  border: 1px solid #e5e5ea;
+  padding: 1.25rem 2.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.25s ease-out;
+  font-weight: 500;
+  min-width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 .market-buttons button:hover {
-  background-color: #357abd;
+  background: white;
   transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border-color: #d8d8dc;
 }
 
-.market-buttons button:active {
-  transform: translateY(0);
+@keyframes softFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-info {
+  animation: softFadeIn 0.5s ease-out forwards;
+}
+
+.market-buttons button {
+  animation: softFadeIn 0.5s var(--delay) ease-out forwards;
+  opacity: 0;
+}
+
+.market-buttons button:nth-child(1) {
+  --delay: 0.1s;
+}
+
+.market-buttons button:nth-child(2) {
+  --delay: 0.2s;
 }
 
 @media (max-width: 768px) {
+  .header {
+    padding: 1.25rem;
+  }
+  
   .user-info {
-    padding: 1rem;
+    padding: 2.5rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   }
 
   .market-buttons {
     flex-direction: column;
     width: 100%;
+    gap: 1rem;
   }
 
   .market-buttons button {
     width: 100%;
+    padding: 1.5rem;
   }
 }
 </style>

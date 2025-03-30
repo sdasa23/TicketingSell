@@ -68,3 +68,8 @@ async def send_token_balance(user_address: str) -> int:
     token_contract = w3.eth.contract(address = config.token_contract_address, abi = config.EventToken_abi)
     balance = token_contract.functions.balanceOf(address).call()
     return balance
+
+@router.get("/get-token-abi")
+async def responseTokenABI():
+    return config.EventNFT_abi
+

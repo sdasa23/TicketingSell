@@ -105,8 +105,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #ffffff;
+  background: linear-gradient(135deg, #f5f5f7, #e5e5ea); 
+  color: #2c3e50;
   padding: 2rem;
   position: relative;
   overflow: hidden;
@@ -116,23 +116,26 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
+  color: #2c3e50; 
 }
 
 button {
-  background-color: #4a90e2;
-  color: white;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 8px; 
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-size: 1rem;
   margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 button:hover {
-  background-color: #357abd;
+  background-color: #4a4a4c;
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button:active {
@@ -140,23 +143,26 @@ button:active {
 }
 
 .result-card {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 2rem;
   border-radius: 1rem;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-width: 500px;
   width: 100%;
+  border: 1px solid #e5e5ea; 
 }
 
 .result-card h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  color: #2c3e50; 
 }
 
 .result-card p {
   font-size: 1.125rem;
   margin-bottom: 1rem;
+  color: #4a4a4c;
 }
 
 .fireworks {

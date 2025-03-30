@@ -32,9 +32,9 @@ contract EventToken is Context, ERC20 {
         _burn(_msgSender(), amount);
     }
 
-    function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
-        _transfer(sender, recipient, amount);
-        return true;
-    }
+    // function transferFrom(address sender, address recipient, uint256 amount) public override returns (bool) {
+    //     _transfer(sender, recipient, amount);
+    //     return true;
+    // }
 }
 

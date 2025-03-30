@@ -1,61 +1,66 @@
 <template>
-    <div>
-      <h1>Welcome to Second-hand Market</h1>
+  <div class="container">
+    <h1>Welcome to Second-hand Market</h1>
 
+    <div class="center-buttons">
       <button @click="showForm = !showForm">Sell Ticket(s)</button>
-  
-      <div v-if="showForm">
-        <h2>Please input ticket information</h2>
-        <form @submit.prevent="publishTicket">
-          <label for="address">Event Address:</label>
-          <input type="text" id="address" v-model="newTicket.event_address" required>
-  
-          <label for="id">Ticket Id: </label>
-          <input type="text" id="id" v-model="newTicket.ticketId" required>
+      <button type="button" @click="fetchTickets">Refresh</button>
+    </div>
 
-          <label for="price">Sale Price:</label>
-          <input type="number" id="price" v-model="newTicket.sale_price" required>
+    <div v-if="showForm">
+      <h2>Please input ticket information</h2>
+      <form @submit.prevent="publishTicket">
+        <label for="address">Event Address:</label>
+        <input type="text" id="address" v-model="newTicket.event_address" required>
+  
+        <label for="id">Ticket Id: </label>
+        <input type="text" id="id" v-model="newTicket.ticketId" required>
 
+        <label for="price">Sale Price:</label>
+        <input type="number" id="price" v-model="newTicket.sale_price" required>
+
+        <div class="form-actions">
           <button type="submit">Publish</button>
-        </form>
-      </div>
-      <button type="button" @click="fetchTickets">Refresh</button>  
-      <div>
-        <table>
+        </div>
+      </form>
+    </div>
+
+    <div>
+      <table>
         <thead>
-            <tr>
-            <th></th>
+          <tr>
+            <th>ID</th>
             <th>Event Address</th>
             <th>Ticket ID</th>
             <th>Seller</th>
             <th>Price</th>
-            <th>Buy</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="ticket in tickets" :key="ticket[0]">
+            <tr>
+              <td>{{ ticket[0] }}</td>
+              <td>{{ ticket[1] }}</td>
+              <td>{{ ticket[3] }}</td>
+              <td>{{ ticket[4] }}</td>
+              <td>{{ ticket[5] }}</td>
+              <td>
+                <button @click="buyOneTicket(ticket)">Buy</button>
+              </td>
             </tr>
-            </thead>
-                <tbody>
-                    <template v-for="ticket in tickets" :key="ticket[0]">
-                        <tr>
-                        <td>{{ ticket[0] }}</td>
-                        <td>{{ ticket[1] }}</td>
-                        <td>{{ ticket[3] }}</td>
-                        <td>{{ ticket[4] }}</td>
-                        <td>{{ ticket[5] }}</td>
-                        <td>
-                            <button @click="buyOneTicket(ticket)">Buy</button>
-                        </td>
-                        </tr>
-                    </template>
-                </tbody>
-        </table>
+          </template>
+        </tbody>
+      </table>
     </div>
-  
-    </div>
-  </template>
+  </div>
+</template>
   
   <script setup>
   import axios from 'axios';
   import { ref, reactive, onMounted } from 'vue';
   import Web3 from "web3";
+  import Swal from 'sweetalert2';
 
   const tickets = ref([]); 
   const showForm = ref(false); 
@@ -154,25 +159,100 @@
       console.error('Poat evenet error :', error);
     }
   };
-  
-    const buyOneTicket = async(ticketInf) =>{
-        try{
-            const user_address = await getCurrentUserAddress();
+
+  async function getTokenAbi() {
+        try {
+            const response = await axios.get('http://localhost:8000/get-token-abi'); 
+            return response.data;
+        } catch (err) {
+            console.error('get token abi error:', err);
+        }
+    }
+
+  async function getTokenAddress() {
+        try {
+            const response = await axios.get('http://localhost:8000/get-token-address'); 
+            return response.data["address"];
+        } catch (err) {
+            console.error('get token address error:', err);
+        }
+    }
+
+  async function approveToken(toAddress, price) {
+    const contractABI = await getTokenAbi();
+    const contractAddress = await getTokenAddress();
+    const web3 = new Web3(window.ethereum);
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    try {
+        const userAddress = await getCurrentUserAddress();
+
+        const transaction = await contract.methods
+                                    .approve(toAddress, price)
+                                    .send({ from: userAddress, gasPrice: 10000000 });
+
+        console.log("Transaction sent:", transaction.transactionHash);
+    } catch (error) {
+        console.error("Error approving NFT:", error);
+    }
+  }
+
+    const buyOneTicket = async(ticketInf) => {
+      let buyId; 
+      let eventAddress; 
+      
+      try {
+          const user_address = await getCurrentUserAddress();
+          eventAddress = ticketInf[1]; 
             const buyInf = {
                 event_address: ticketInf[1],
                 market_address: ticketInf[3],
                 buyer_address: user_address,
                 ticketId:  ticketInf[2]
             };
-            const buyId = await axios.post('http://localhost:8000/second-market/purchase', buyInf);
-            console.log(buyId.data);
-            fetchTickets();
-            await add_NFT_into_wallet(ticketInf[1], String(buyId.data), '')
-        } catch (error) {
-            console.error('Buy ticket error:', error);
-        }
-        
-    }
+          await approveToken(ticketInf[3] , ticketInf[5]);
+          const response = await axios.post('http://localhost:8000/second-market/purchase', buyInf);
+          buyId = response.data;
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const result = await Swal.fire({
+              title: 'Success!',
+              text: `Ticket purchased successfully! Your ticket's id is ${buyId}`,
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'Add into MetaMask',
+              cancelButtonText: 'OK',
+          });
+
+          if (result.isConfirmed) {
+              console.log(eventAddress)
+              console.log(buyId);
+              await add_NFT_into_wallet(ticketInf[1], String(buyId), '');
+          }
+
+          await fetchTickets();
+          
+      } catch (error) {
+          console.error('Buy ticket error:', error);
+          
+          let errorMessage = error.message;
+          if (eventAddress && buyId) {
+              errorMessage += '\n Please add the ticket manually.' +
+                            '\n Address: '+ eventAddress +
+                            '\nID: '+ buyId;
+          } else if (eventAddress) {
+              errorMessage += `\n Event Address: ${eventAddress}` +
+                            `\n Purchase may not have completed.`;
+          }
+          
+          await Swal.fire({
+              title: 'Error!',
+              text: errorMessage,
+              icon: 'error'
+          });
+      }
+  }
+
+
 
   const resetForm = () => {
     newTicket.name = '';
@@ -189,15 +269,15 @@
   onMounted(fetchTickets);
   </script>
   
-  <style>
-
+<style>
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #ffffff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f5f5f7; 
+  color: #2c3e50; 
   min-height: 100vh;
+  line-height: 1.6;
 }
 
 .container {
@@ -210,102 +290,123 @@ h1 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
+  font-weight: 600;
+  color: #2c3e50;
+  letter-spacing: -0.5px;
 }
 
 h2 {
   font-size: 2rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 h3 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #3a3a3c;
 }
 
 button {
-  background-color: #4a90e2;
-  color: white;
+  background-color: #3a3a3c;
+  color: #f5f5f7;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.25s ease-out;
   font-size: 1rem;
   margin: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 button:hover {
-  background-color: #357abd;
+  background-color: #4a4a4c;
   transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button:active {
   transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 form {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.95); 
   padding: 2rem;
   border-radius: 1rem;
   margin-bottom: 2rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e5ea; 
 }
 
 label {
   display: block;
   margin-bottom: 0.5rem;
   font-size: 1rem;
-  color: #ffffff;
+  color: #4a4a4c;
+  font-weight: 500;
 }
 
 input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   margin-bottom: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid #e0e0e0;
   border-radius: 0.5rem;
   font-size: 1rem;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: white;
+  color: #2c3e50;
+  transition: border-color 0.2s ease;
 }
 
 input:focus {
   outline: none;
-  border-color: #4a90e2;
+  border-color: #7a73d8; 
+  box-shadow: 0 0 0 2px rgba(122, 115, 216, 0.2);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 2rem;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: white;
   border-radius: 1rem;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
 th, td {
   padding: 1rem;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #f0f0f0;
 }
 
 th {
-  background-color: rgba(255, 255, 255, 0.2);
-  font-weight: bold;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #f8f9fa; 
 }
 
 .detail-card {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 1rem;
-  border-radius: 0.5rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
   margin-top: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f0f0f0;
 }
 
 .detail-card div {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: #4a4a4c;
 }
 
 @media (max-width: 768px) {
@@ -322,7 +423,7 @@ tr:hover {
   }
 
   form {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 
   table {
@@ -330,7 +431,17 @@ tr:hover {
   }
 
   th, td {
-    padding: 0.75rem;
+    padding: 0.875rem;
+  }
+  
+  .container {
+    padding: 1.5rem;
   }
 }
-  </style>
+.center-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; 
+  margin: 1.5rem 0;
+}
+</style>
