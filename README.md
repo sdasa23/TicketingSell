@@ -1,3 +1,5 @@
+This is a group project of Bitcoin in CityUHK IS6200 
+
 How to start?
 
 1. start  ganache test net
