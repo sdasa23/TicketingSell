@@ -18,3 +18,8 @@ cd backend/ &&  uvicorn main:app --reload
 cd frontend/ && npm run serve
 
 6. Now you can visit http://localhost:8081
+
+Project Framework
+
+![image](https://github.com/user-attachments/assets/315258ab-3053-412e-b890-814cbe331e39)
+
